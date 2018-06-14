@@ -130,11 +130,17 @@ $(document).ready(function () {
 </div>
 <div id="downloading-the-reference-genome-from-ucsc-browser" class="section level1">
 <h1>Downloading the reference genome from UCSC browser</h1>
-<pre class="r"><code># wget --timestamping 'ftp://hgdownload.cse.ucsc.edu/goldenPath/hg19/chromosomes/*'</code></pre>
+<pre class="r"><code>wget --timestamping 'ftp://hgdownload.cse.ucsc.edu/goldenPath/hg19/chromosomes/*'</code></pre>
+<pre><code>## Error: &lt;text&gt;:1:21: unexpected string constant
+## 1: wget --timestamping 'ftp://hgdownload.cse.ucsc.edu/goldenPath/hg19/chromosomes/*'
+##                         ^</code></pre>
 </div>
 <div id="using-rsync-to-transfer-data-from-local-server-to-hpc-server" class="section level1">
 <h1>Using ‘rsync’ to transfer data from local server to HPC server</h1>
-<pre class="r"><code># rsync -avzhe ssh  /Users/Mitali/Desktop/Ensembl_hg38/ singhmit@hpc-transfer:/home/rcf-proj3/ms12/</code></pre>
+<pre class="r"><code>rsync -avzhe ssh  /Users/Mitali/Desktop/Ensembl_hg38/ singhmit@hpc-transfer:/home/rcf-proj3/ms12/</code></pre>
+<pre><code>## Error: &lt;text&gt;:1:14: unexpected symbol
+## 1: rsync -avzhe ssh
+##                  ^</code></pre>
 </div>
 <div id="alignment-using-bowtie2-and-tophat" class="section level1">
 <h1>Alignment using bowtie2 and tophat</h1>
@@ -199,38 +205,46 @@ for i in {34..44}; do STAR --genomeDir /home/rcf-proj3/ms12/hg38/hg38-starIndex/
 <div id="sorting-and-indexing-bam-files" class="section level1">
 <h1>Sorting and indexing BAM files</h1>
 <pre class="r"><code># Sort the BAM files:
-samtools sort  SRR6145436STARAligned.out.bam SRR6145436.out
-
-# SRR6145436STARAligned.out.bam: the aligned BAM files (obtained from samtools view command)
-# SRR6145436.out: The output file will be produced with this name and .bam extension (for this file, the output will be SRR6145436.out.bam</code></pre>
+samtools sort  SRR6145436STARAligned.out.bam SRR6145436.out</code></pre>
 <pre><code>## Error: &lt;text&gt;:2:10: unexpected symbol
 ## 1: # Sort the BAM files:
 ## 2: samtools sort
 ##             ^</code></pre>
+<ul>
+<li>SRR6145436STARAligned.out.bam: the aligned BAM files (obtained from samtools view command)</li>
+<li>SRR6145436.out: The output file will be produced with this name and .bam extension (for this file, the output will be SRR6145436.out.bam</li>
+</ul>
+<p>```</p>
 <pre class="r"><code># Index the BAM files:
-samtools index SRR6145433.out.bam
-
-#This will produce a .bai file : the output of this will be SRR6145433.out.bam.bai
-# For IGV to work, place the .bai and .bam file in the same directory. IGV requires the index file for the BAM file to upload the genome onto the browser</code></pre>
+samtools index SRR6145433.out.bam</code></pre>
 <pre><code>## Error: &lt;text&gt;:2:10: unexpected symbol
 ## 1: # Index the BAM files:
 ## 2: samtools index
 ##             ^</code></pre>
+<ul>
+<li>This will produce a .bai file : the output of this will be SRR6145433.out.bam.bai</li>
+<li>For IGV to work, place the .bai and .bam file in the same directory. IGV requires the index file for the BAM file to upload the genome onto the browser</li>
+</ul>
+<p>```</p>
 </div>
 <div id="converting-bam-to-vcf-using-samtools-mpileup" class="section level1">
 <h1>Converting BAM to VCF using samtools mpileup</h1>
 <pre class="r"><code>#  Convert BAM to BCF:
 
-samtools mpileup -uf /home/rcf-proj3/ms12/hg38/hg38_ref_genome.fa /home/rcf-proj3/ms12/FASTQ/OLD/STAR_output/bam/SRR6145424.out.bam | bcftools view -bvcg - &gt; SRR6145424.bcf
-
-#home/rcf-proj3/ms12/hg38/hg38_ref_genome.fa: path to the reference .fa file
-
-#  Convert BCF to VCF:
+samtools mpileup -uf /home/rcf-proj3/ms12/hg38/hg38_ref_genome.fa /home/rcf-proj3/ms12/FASTQ/OLD/STAR_output/bam/SRR6145424.out.bam | bcftools view -bvcg - &gt; SRR6145424.bcf</code></pre>
+<pre><code>## Error: &lt;text&gt;:3:10: unexpected symbol
+## 2: 
+## 3: samtools mpileup
+##             ^</code></pre>
+<ul>
+<li>home/rcf-proj3/ms12/hg38/hg38_ref_genome.fa: path to the reference .fa file</li>
+</ul>
+<pre class="r"><code>#  Convert BCF to VCF:
 
 bcftools view SRR6145424.bcf | vcfutils.pl varFilter -D100 &gt; SRR6145423.flt.vcf</code></pre>
 <pre><code>## Error: &lt;text&gt;:3:10: unexpected symbol
 ## 2: 
-## 3: samtools mpileup
+## 3: bcftools view
 ##             ^</code></pre>
 </div>
 

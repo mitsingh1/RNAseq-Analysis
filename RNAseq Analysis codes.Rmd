@@ -7,13 +7,13 @@ for i in {20..22}; do fastq-dump -v --accession SRR61454$i; done;
 
 # Downloading the reference genome from UCSC browser
 ```{r error=TRUE}
-# wget --timestamping 'ftp://hgdownload.cse.ucsc.edu/goldenPath/hg19/chromosomes/*'
+wget --timestamping 'ftp://hgdownload.cse.ucsc.edu/goldenPath/hg19/chromosomes/*'
 
 ```
 
 # Using 'rsync' to transfer data from local server to HPC server
 ```{r error=TRUE}
-# rsync -avzhe ssh  /Users/Mitali/Desktop/Ensembl_hg38/ singhmit@hpc-transfer:/home/rcf-proj3/ms12/
+rsync -avzhe ssh  /Users/Mitali/Desktop/Ensembl_hg38/ singhmit@hpc-transfer:/home/rcf-proj3/ms12/
 ```
 
 # Alignment using bowtie2 and tophat
@@ -75,18 +75,19 @@ samtools view -Sb SRR6145438STARAligned.out.sam >  SRR6145438STARAligned.out.bam
 ```{r error=TRUE}
 # Sort the BAM files:
 samtools sort  SRR6145436STARAligned.out.bam SRR6145436.out
+```
 
-# SRR6145436STARAligned.out.bam: the aligned BAM files (obtained from samtools view command)
-# SRR6145436.out: The output file will be produced with this name and .bam extension (for this file, the output will be SRR6145436.out.bam
+- SRR6145436STARAligned.out.bam: the aligned BAM files (obtained from samtools view command)
+- SRR6145436.out: The output file will be produced with this name and .bam extension (for this file, the output will be SRR6145436.out.bam
 
 ```
 
 ```{r error=TRUE}
 # Index the BAM files:
 samtools index SRR6145433.out.bam
-
-#This will produce a .bai file : the output of this will be SRR6145433.out.bam.bai
-# For IGV to work, place the .bai and .bam file in the same directory. IGV requires the index file for the BAM file to upload the genome onto the browser
+```
+- This will produce a .bai file : the output of this will be SRR6145433.out.bam.bai
+- For IGV to work, place the .bai and .bam file in the same directory. IGV requires the index file for the BAM file to upload the genome onto the browser
 
 ```
 
@@ -97,8 +98,11 @@ samtools index SRR6145433.out.bam
 
 samtools mpileup -uf /home/rcf-proj3/ms12/hg38/hg38_ref_genome.fa /home/rcf-proj3/ms12/FASTQ/OLD/STAR_output/bam/SRR6145424.out.bam | bcftools view -bvcg - > SRR6145424.bcf
 
-#home/rcf-proj3/ms12/hg38/hg38_ref_genome.fa: path to the reference .fa file
+```
 
+- home/rcf-proj3/ms12/hg38/hg38_ref_genome.fa: path to the reference .fa file
+
+```{r error=TRUE}
 #  Convert BCF to VCF:
 
 bcftools view SRR6145424.bcf | vcfutils.pl varFilter -D100 > SRR6145423.flt.vcf
