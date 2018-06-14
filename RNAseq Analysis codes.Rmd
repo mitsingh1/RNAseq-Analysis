@@ -31,7 +31,7 @@ cat *.fa > hg19_ref_genome.fa
 
 ```
 
-#Alignment using STAR
+# Alignment using STAR
 
 ```{r error=TRUE}
 # Index the reference genome
