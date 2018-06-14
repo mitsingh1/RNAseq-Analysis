@@ -1,0 +1,105 @@
+# Downloading FASTQ data samples from SRA using SRAtoolkit (loop)
+
+
+```{r error=TRUE}
+for i in {20..22}; do fastq-dump -v --accession SRR61454$i; done;
+```
+
+# Downloading the reference genome from UCSC browser
+```{r error=TRUE}
+# wget --timestamping 'ftp://hgdownload.cse.ucsc.edu/goldenPath/hg19/chromosomes/*'
+
+```
+
+# Using 'rsync' to transfer data from local server to HPC server
+```{r error=TRUE}
+# rsync -avzhe ssh  /Users/Mitali/Desktop/Ensembl_hg38/ singhmit@hpc-transfer:/home/rcf-proj3/ms12/
+```
+
+# Alignment using bowtie2 and tophat
+
+```{r error=TRUE}
+##Bowtie-build : building indexes to the reference genome (hg19)
+
+bowtie2-build /home/rcf-proj3/ms12/hg19/uncompressed/hg19_ref_genome.fa hg19
+
+# Alignment using TopHat
+tophat -p 8 /home/rcf-proj3/ms12/hg19_ref/hg19 /home/rcf-proj3/ms12/FASTQ/AD/SRR6145433.fastq
+
+# Combine all .fa files into a new output file called hg19_ref_genome.fa
+cat *.fa > hg19_ref_genome.fa
+
+```
+
+#Alignment using STAR
+
+```{r error=TRUE}
+# Index the reference genome
+STAR --runThreadN 4 --runMode genomeGenerate --genomeDir /home/rcf-proj3/ms12/hg38/hg38-starIndex --genomeFastaFiles /home/rcf-proj3/ms12/hg38/hg38_ref_genome.fa --sjdbGTFfile /home/rcf-proj3/ms12/hg38/Homo_sapiens.GRCh38.79.gtf --sjdbOverhang 100
+
+#—genomeDir: where you want the index to be saved (in this case, it will be in the directory hg38-starIndex)
+
+#—genomeFastaFiles: path to the reference genome (here hg38 ref genome)
+
+#—sjdbGTFFile:  path to the annotation file, in this case, for hg38 (in this case both hg38 ref genome and hg38 annotation files were downloaded from ENSEMBL: Both files must be downloaded from the same place)
+
+```
+
+```{r error=TRUE}
+# Running the alignment in STAR
+ # Template:  STAR --genomeDir <Directory with the Genome Index>  --runThreadN <# cpus> --readFilesIn <FASTQ file> --outFileNamePrefix <OutputPrefix>
+
+STAR --genomeDir /home/rcf-proj3/ms12/hg38/hg38-starIndex/ --runThreadN 24 --readFilesIn /home/rcf-proj3/ms12/FASTQ/AD/SRR6145433.fastq --outFileNamePrefix SRR6145433STAR
+```
+
+
+# Loop for running an alignment with STAR:
+
+
+```{r error=TRUE}
+
+# In this loop we want to run STAR on every single FASTQ file in the directory AD (path: /home/rcf-proj3/ms12/FASTQ/AD/file name)
+
+for i in {34..44}; do STAR --genomeDir /home/rcf-proj3/ms12/hg38/hg38-starIndex/ --runThreadN 24 --readFilesIn /home/rcf-proj3/ms12/FASTQ/AD/SRR61454$i.fastq --outFileNamePrefix SRR61454$iSTAR; done;
+
+```
+
+# File Conversions
+
+# Converting SAM to BAM
+```{r error=TRUE}
+samtools view -Sb SRR6145438STARAligned.out.sam >  SRR6145438STARAligned.out.bam
+```
+
+# Sorting and indexing BAM files
+```{r error=TRUE}
+# Sort the BAM files:
+samtools sort  SRR6145436STARAligned.out.bam SRR6145436.out
+
+# SRR6145436STARAligned.out.bam: the aligned BAM files (obtained from samtools view command)
+# SRR6145436.out: The output file will be produced with this name and .bam extension (for this file, the output will be SRR6145436.out.bam
+
+```
+
+```{r error=TRUE}
+# Index the BAM files:
+samtools index SRR6145433.out.bam
+
+#This will produce a .bai file : the output of this will be SRR6145433.out.bam.bai
+# For IGV to work, place the .bai and .bam file in the same directory. IGV requires the index file for the BAM file to upload the genome onto the browser
+
+```
+
+# Converting BAM to VCF using samtools mpileup
+
+```{r error=TRUE}
+#  Convert BAM to BCF:
+
+samtools mpileup -uf /home/rcf-proj3/ms12/hg38/hg38_ref_genome.fa /home/rcf-proj3/ms12/FASTQ/OLD/STAR_output/bam/SRR6145424.out.bam | bcftools view -bvcg - > SRR6145424.bcf
+
+#home/rcf-proj3/ms12/hg38/hg38_ref_genome.fa: path to the reference .fa file
+
+#  Convert BCF to VCF:
+
+bcftools view SRR6145424.bcf | vcfutils.pl varFilter -D100 > SRR6145423.flt.vcf
+```
